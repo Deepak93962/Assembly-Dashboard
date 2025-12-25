@@ -33,7 +33,7 @@ export default function Dashboard() {
     testing: [],
   });
 
-  // 🔄 LIVE GENERATOR
+  // 🔄 LIVE PRODUCTION SIMULATION
   useEffect(() => {
     if (mode !== "today" || !isRunning) return;
 
@@ -50,28 +50,22 @@ export default function Dashboard() {
       setLiveData((prev) => {
         const updated = prev.map((s) => ({ ...s }));
 
-    updated[0].count += 1; // Stator always moves
+        // 🔒 Realistic assembly delays
+        updated[0].count += 1;
 
-    // Rotor
-    if (updated[1].count < updated[0].count - 1 && Math.random() > 0.4) {
-      updated[1].count += 1;
-    }
+        if (updated[1].count < updated[0].count - 1 && Math.random() > 0.4)
+          updated[1].count += 1;
 
-    // Wiring
-    if (updated[2].count < updated[1].count - 1 && Math.random() > 0.5) {
-      updated[2].count += 1;
-    }
+        if (updated[2].count < updated[1].count - 1 && Math.random() > 0.5)
+          updated[2].count += 1;
 
-    // Final Assembly
-    if (updated[3].count < updated[2].count - 1 && Math.random() > 0.6) {
-      updated[3].count += 1;
-    }
+        if (updated[3].count < updated[2].count - 1 && Math.random() > 0.6)
+          updated[3].count += 1;
 
-    // Testing (slowest)
-    if (updated[4].count < updated[3].count - 2 && Math.random() > 0.7) {
-      updated[4].count += 1;
-    }
+        if (updated[4].count < updated[3].count - 2 && Math.random() > 0.7)
+          updated[4].count += 1;
 
+        // 🟢 Push minute-wise data to chart
         if (
           elapsedSeconds !== 0 &&
           elapsedSeconds % 60 === 0 &&
@@ -80,14 +74,13 @@ export default function Dashboard() {
           const minute = elapsedSeconds / 60;
 
           setMinuteCategories((c) => [...c, `${minute} min`]);
-         setMinuteSeries((s) => ({
-           stator: [...s.stator, updated[0].count],
-           rotor: [...s.rotor, updated[1].count],
-           wiring: [...s.wiring, updated[2].count],
-           final: [...s.final, updated[3].count],
-           testing: [...s.testing, updated[4].count], // completed motors
-         }));
-
+          setMinuteSeries((s) => ({
+            stator: [...s.stator, updated[0].count],
+            rotor: [...s.rotor, updated[1].count],
+            wiring: [...s.wiring, updated[2].count],
+            final: [...s.final, updated[3].count],
+            testing: [...s.testing, updated[4].count],
+          }));
         }
 
         return updated;
@@ -97,17 +90,8 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [mode, isRunning, elapsedSeconds]);
 
-  const tableData = liveData;
-
-  const isChartReady =
-    minuteSeries.stator.length > 0 &&
-    minuteSeries.stator.length === minuteSeries.rotor.length &&
-    minuteSeries.stator.length === minuteSeries.wiring.length &&
-    minuteSeries.stator.length === minuteSeries.final.length &&
-    minuteSeries.stator.length === minuteSeries.testing.length;
-
   return (
-    <div className="p-6 space-y-6 bg-gray-100 min-h-screen">
+    <div className="p-6 space-y-6 min-h-screen bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200">
       <Header />
 
       <DateController
@@ -124,16 +108,17 @@ export default function Dashboard() {
       {/* 🔥 MAIN DASHBOARD AREA */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[520px]">
         {/* LEFT: TABLE */}
-        <div className="bg-white rounded-xl shadow p-4 overflow-y-auto">
+        <div className="bg-white/90 backdrop-blur rounded-2xl shadow-lg p-5 overflow-y-auto">
           <h2 className="text-lg font-semibold mb-3">Production Steps</h2>
-          <ProductionTable data={tableData} />
+          <ProductionTable data={liveData} />
         </div>
 
         {/* RIGHT: CHART */}
-        <div className="bg-white rounded-xl shadow p-4">
+        <div className="bg-white/90 backdrop-blur rounded-2xl shadow-lg p-5">
           {minuteCategories.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-gray-500">
-              ⏳ Chart will appear after 1 minute
+            <div className="h-full flex flex-col items-center justify-center text-gray-400">
+              <span className="text-3xl">📊</span>
+              <p className="mt-2 text-sm">Chart will appear after 1 minute</p>
             </div>
           ) : (
             <ProductionChart

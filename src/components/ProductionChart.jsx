@@ -14,7 +14,7 @@ export default function ProductionChart({ mode, chartData, categories }) {
       type: "line",
       height: 350,
       animations: {
-        enabled: mode === "today", // 🔴 only today is live
+        enabled: mode === "today",
       },
       toolbar: { show: false },
     },
@@ -23,13 +23,13 @@ export default function ProductionChart({ mode, chartData, categories }) {
       width: 3,
     },
     markers: {
-      size: 4,
+      size: 5,
     },
     colors: ["#22c55e", "#6366f1", "#f59e0b", "#ec4899", "#38bdf8"],
     xaxis: {
       categories,
       title: {
-        text: mode === "today" ? "Live Timeline" : "Date",
+        text: "Live Timeline",
       },
     },
     yaxis: {
@@ -39,16 +39,25 @@ export default function ProductionChart({ mode, chartData, categories }) {
     },
     legend: {
       position: "bottom",
+      markers: {
+        radius: 12,
+      },
+    },
+    grid: {
+      strokeDashArray: 4,
     },
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        Production Trend ({mode.toUpperCase()})
+    <>
+      <h2 className="text-lg font-semibold text-gray-800 mb-1">
+        Production Trend
       </h2>
+      <p className="text-sm text-gray-500 mb-3">
+        Minute-wise production growth
+      </p>
 
       <Chart options={options} series={series} type="line" height={350} />
-    </div>
+    </>
   );
 }
