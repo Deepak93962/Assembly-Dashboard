@@ -3,9 +3,12 @@ export default function DateController({
   setDateMode,
   selectedDate,
   setSelectedDate,
+  isRunning,
+  setIsRunning,
 }) {
   return (
-    <div className="flex items-center gap-4 bg-white p-4 rounded-xl shadow">
+    <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-xl shadow">
+      {/* Date Mode */}
       <div className="flex gap-2">
         <button
           onClick={() => setDateMode("auto")}
@@ -26,6 +29,7 @@ export default function DateController({
         </button>
       </div>
 
+      {/* Date Picker */}
       <input
         type="date"
         disabled={dateMode === "auto"}
@@ -33,6 +37,23 @@ export default function DateController({
         onChange={(e) => setSelectedDate(e.target.value)}
         className="border rounded px-3 py-2 disabled:opacity-50"
       />
+
+      {/* Production Controls */}
+      <div className="flex gap-2 ml-auto">
+        <button
+          onClick={() => setIsRunning(true)}
+          className="px-4 py-2 bg-green-500 text-white rounded"
+        >
+          ▶ Start Production
+        </button>
+
+        <button
+          onClick={() => setIsRunning(false)}
+          className="px-4 py-2 bg-red-500 text-white rounded"
+        >
+          ⏸ Stop Production
+        </button>
+      </div>
     </div>
   );
 }
